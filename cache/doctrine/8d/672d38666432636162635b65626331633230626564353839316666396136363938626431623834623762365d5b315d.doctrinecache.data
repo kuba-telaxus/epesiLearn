@@ -1,0 +1,570 @@
+1481026446
+a:2:{s:7:"content";s:27395:"<h4>Introduction</h4>
+<hr />
+<p>RecordBrowser object wrapper allows easy creation, use and maintenance of RecordSets. It covers most of functionality provided by RecordBrowser, but everything is done in objective way. It's wrapper around static RecordBrowser's methods, so if you need better performance than code readability use RecordBrowser directly, but in most cases any slow down wouldn't be noticed.</p>
+<p><strong>Glossary</strong></p>
+<ul>
+<li>
+<p>RecordBrowser (RB) - Module Utils/RecordBrowser documented here.</p>
+</li>
+<li>
+<p>RecordSet - a set of records managed by RB (same as here).</p>
+</li>
+<li>Field definition - set of properties required to create field in new RecordSet (such as name, type, etc - more info)</li>
+</ul>
+<p><strong>Brief classes description</strong></p>
+<p>Every built-in class name related to this extension begins with <strong>RBO_</strong> prefix.</p>
+<p><strong>RBO_Recordset</strong></p>
+<pre><code>Object of this class represents RecordSet. Here is proxy to all RB functions, but you have to extend this class with your own implementation (details below) or use Recordset Accessor.</code></pre>
+<p><strong>RBO_Record</strong></p>
+<pre><code>Represents single record from RecordSet.</code></pre>
+<p><strong>RBO_RecordsetAccessor</strong></p>
+<pre><code>This class provides object wrapper for any RecordSet.</code></pre>
+<p><strong>RBO_FieldDefinition</strong></p>
+<pre><code>This is generic field definition class. You can use it, but simpler and better is to use specific field classes listed here.</code></pre>
+<p><strong>Field definitions classes</strong></p>
+<ul>
+<li>
+<p>RBO_Field_Text</p>
+</li>
+<li>
+<p>RBO_Field_LongText</p>
+</li>
+<li>
+<p>RBO_Field_Integer</p>
+</li>
+<li>
+<p>RBO_Field_Float</p>
+</li>
+<li>
+<p>RBO_Field_Checkbox</p>
+</li>
+<li>
+<p>RBO_Field_Calculated</p>
+</li>
+<li>
+<p>RBO_Field_Date</p>
+</li>
+<li>
+<p>RBO_Field_Timestamp</p>
+</li>
+<li>
+<p>RBO_Field_Currency</p>
+</li>
+<li>
+<p>RBO_Field_Select</p>
+</li>
+<li>
+<p>RBO_Field_MultiSelect</p>
+</li>
+<li>
+<p>RBO_Field_CommonData</p>
+</li>
+<li>RBO_Field_PageSplit</li>
+</ul>
+<h4>Learn by example</h4>
+<hr />
+<p><strong>Usage for already created RecordSet</strong></p>
+<p>You can create RecordSet object for any existing RecordSet by using RBO_RecordsetAccessor class.</p>
+<pre><code>$rbo = new RBO_RecordsetAccessor('contact');
+echo $rbo-&gt;get_records_count();
+$record = $rbo-&gt;get_record(23);   // retrieve contact with id = 23
+if ($record != null) {
+    echo $record-&gt;first_name;
+    $record-&gt;first_name = 'Test'; // change first name field
+    $record-&gt;save();              // save record
+}
+$records = $rbo-&gt;get_records(array('first_name' =&gt; 'Test'));</code></pre>
+<p><strong>Your own RecordSet</strong></p>
+<p>To make your own RecordSet you have to write one single class that extends RBO_Recordset class.</p>
+<p>At first you have to create module. If you don't know how, please read documentation. I assume that our module path is EPESI_DIR/modules/Custom/Inventory. Our RecordSet class name have to consist of module name followed by file name to let autoloader load this class. If your installation doesn't have autoloading feature you need to include file manually.</p>
+<p><strong>Only RecordSet class</strong></p>
+<p>File modules/Custom/Inventory/Categories.php:</p>
+<pre><code>class Custom_Inventory_Categories extends RBO_Recordset {
+
+    function table_name() {
+        return 'custom_inventory_categories';
+    }
+
+    function fields() {
+        $category_name = new RBO_Field_Text('Name');
+        $category_name-&gt;set_length(24)-&gt;set_required()-&gt;set_visible();
+
+        $description = new RBO_Field_LongText('Description');
+        $description-&gt;set_visible();
+
+        return array($category_name, $description);
+    }
+}</code></pre>
+<p>And your RecordSet is ready to use! Now you have to install RecordSet during module's install procedure.</p>
+<pre><code>class Custom_InventoryInstall extends ModuleInstall {
+
+    function install() {
+        $categories = new Custom_Inventory_Categories();
+        $success = $categories-&gt;install();
+        return $success;
+    }
+
+    ...
+}</code></pre>
+<p><strong>RecordSet class and Record class</strong></p>
+<p>You can define your own class that extends RBO_Record. Use it to specify your own methods attached to record. Every record returned from your RecordSet will be object of your Record class.</p>
+<p>File modules/Custom/Inventory/Category.php:</p>
+<p>class Custom_Inventory_Category extends RBO_Record {</p>
+<pre><code>function print_summary() {
+    print $this-&gt;name . " - " . $this-&gt;description;
+}</code></pre>
+<p>}</p>
+<p>File modules/Custom/Inventory/Categories.php:</p>
+<pre><code>class Custom_Inventory_Categories extends RBO_Recordset {
+
+    function table_name() {
+        return 'custom_inventory_categories';
+    }
+
+    function class_name() {
+        return 'Custom_Inventory_Category';
+    }
+
+    function fields() {
+        $category_name = new RBO_Field_Text('Name');
+        $category_name-&gt;set_length(24)-&gt;set_required()-&gt;set_visible();
+
+        $description = new RBO_Field_LongText('Description');
+        $description-&gt;set_visible();
+
+        return array($category_name, $description);
+    }
+}</code></pre>
+<p>Sample usage:</p>
+<pre><code>$rb = new Custom_Inventory_Categories();
+$rec = $rb-&gt;get_record(1);
+$rec-&gt;print_summary();</code></pre>
+<h4>Magic callbacks</h4>
+<hr />
+<p><strong>Overview</strong></p>
+<p>Sometimes there is a need to modify data before display or show it in different color according to some rules. This can be simply achieved using magic callbacks. Magic callbacks are QFfield and display callbacks, known from Utils/RecordBrowser, but you don't have to define them explicitly in field definition.</p>
+<p>Just create method named display<em><field id> or QFfield</em><field id>, where field id is id returned by Utils_RecordBrowserCommon::get_field_id. Simply its lowercased name with every non alphanumeric character replaced by underscore. Name =&gt; name, Last Name =&gt; last_name, Address 1 =&gt; address_1. Such methods may be defined in your RecordSet class or Record class. During RecordSet install process they will be discovered and set as appropriate callback.</p>
+<p>File modules/Custom/Inventory/Categories.php:</p>
+<pre><code>class Custom_Inventory_Categories extends RBO_Recordset {
+
+    function table_name() {
+        return 'custom_inventory_categories';
+    }
+
+    function fields() {
+        $category_name = new RBO_Field_Text('Name');
+        $category_name-&gt;set_length(24)-&gt;set_required()-&gt;set_visible();
+
+        $description = new RBO_Field_LongText('Description');
+        $description-&gt;set_visible();
+
+        return array($category_name, $description);
+    }
+
+    function display_name($record, $nolink) {
+        return $record-&gt;record_link('my prefix' . $record-&gt;name, $nolink);
+    }
+}</code></pre>
+<p><strong>In which class define those methods?</strong></p>
+<p>As mentioned You can define such method in RBO_Recordset or RBO_Record child class. If you will define in both, RBO_Recordset method will be used.</p>
+<p>It's up to you where you put this method. When defined in Record class $this is your record's object filled with all data, but it's one more class to write.</p>
+<p><strong>Display callback</strong></p>
+<p><strong>Function arguments</strong></p>
+<p>There are two cases, depending on where you have defined method. If you've defined method in Record class you will not get record object as first argument.</p>
+<p>Parameters:</p>
+<ol>
+<li>
+<p>Object of RBO_Record class (or class returned by class_name() method) - only for method in RecordSet class!</p>
+</li>
+<li>
+<p>Do not create link directive.</p>
+</li>
+<li>Field definition in array</li>
+</ol>
+<p><strong>Examples</strong></p>
+<p>In Record class:</p>
+<pre><code>class Custom_Inventory_Category extends RBO_Record {
+
+    ...
+
+    function display_name($nolink) {
+        return $this-&gt;record_link('my prefix' . $this-&gt;name, $nolink);
+    }
+}</code></pre>
+<p>In RecordSet class:</p>
+<pre><code>class Custom_Inventory_Categories extends RBO_Recordset {
+
+    ...
+
+    function display_name($record, $nolink) {
+        return $record-&gt;record_link('my prefix' . $record-&gt;name, $nolink);
+    }
+}</code></pre>
+<p><strong>QFfield callback</strong></p>
+<p>It's used in every place where QuickForm library would render field.</p>
+<p><strong>Function arguments</strong></p>
+<ol>
+<li>
+<p>Libs/QuickForm module instance</p>
+</li>
+<li>
+<p>Field id (e.g. first_name, address_1)</p>
+</li>
+<li>
+<p>Field label/name (e.g First Name, Address 1 - same as defined in Field Definition as name)</p>
+</li>
+<li>
+<p>Form display mode.</p>
+</li>
+<li>
+<p>Default value. Default value or current record's value for this field.</p>
+</li>
+<li>
+<p>Field definition in array</p>
+</li>
+<li>Utils/RecordBrowser module instance</li>
+</ol>
+<p><strong>Examples</strong></p>
+<p>In Record class:</p>
+<pre><code>class Custom_Inventory_Category extends RBO_Record {
+
+    ...
+
+    function QFfield_name($form, $field, $label, $mode, $default) {
+        if ($mode == 'view') {
+            $form-&gt;addElement('static', $field, $label, $this-&gt;display_name());
+        } else {
+            $form-&gt;addElement('text', $field, $label);
+            $form-&gt;setDefaults(array($field =&gt; $default));
+        }
+    }
+}</code></pre>
+<p>In RecordSet class:</p>
+<pre><code>class Custom_Inventory_Categories extends RBO_Recordset {
+
+    ...
+
+    function QFfield_name($form, $field, $label, $mode, $default) {
+        if ($mode == 'view') {
+            $record = $this-&gt;record_to_object($rb_obj-&gt;record);
+            $form-&gt;addElement('static', $field, $label, $record-&gt;display_name());
+        } else {
+            $form-&gt;addElement('text', $field, $label);
+            $form-&gt;setDefaults(array($field =&gt; $default));
+        }
+    }
+}</code></pre>
+<h4>Detailed classes description</h4>
+<hr />
+<p><strong>RBO_Recordset</strong></p>
+<p>This class is abstract. You must extend it to define own Recordset.</p>
+<p>Example:</p>
+<pre><code>class Custom_Inventory_Categories extends RBO_Recordset {
+    ...
+}</code></pre>
+<p><strong>Abstract methods</strong></p>
+<p>Abstract methods that have to be implemented:</p>
+<p><strong>table_name()</strong></p>
+<p>Return table name used to identify RecordSet.</p>
+<pre><code>  * It should consist only of alphanumeric and underscore characters (regex [a-zA-Z_0-9])
+
+  * Returned string length can't exceed 39 characters.
+
+  * To avoid name collisions it should begin with module name.</code></pre>
+<p>We suggest to use names lower-cased names like '<category><em><module></em><recordset>' or just '<category>_<module>', when only one recordset is used, e.g.</p>
+<pre><code>  * premium_listmanager_element
+
+  * premium_listmanager_history
+
+  * crm_assets</code></pre>
+<p>Example:</p>
+<pre><code>function table_name() {
+    return 'custom_inventory_categories';
+}</code></pre>
+<p><strong>fields()</strong></p>
+<p>Return array of fields used to install recordset.</p>
+<pre><code>  * Every array entry should be instance of RBO_FieldDefinition.
+
+  * Order of fields in array is significant and it defines order of fields display.</code></pre>
+<p>Example:</p>
+<pre><code>function fields() {
+    $category_name = new RBO_Field_Text('Name');
+    $category_name-&gt;set_length(24)-&gt;set_required()-&gt;set_visible();
+
+    $description = new RBO_Field_LongText('Description');
+    $description-&gt;set_visible();
+
+    return array($category_name, $description);
+}</code></pre>
+<p><strong>Optional override</strong></p>
+<p><strong>class_name()</strong></p>
+<p>Override this method to specify class, that extends RBO_Record. Records retrieved from RecordSet will be in this specified type. Use this to add custom methods to your records.</p>
+<p>Example:</p>
+<pre><code>class Custom_Inventory_Item extends RBO_Record {
+    function is_my_favourite() {
+        // code here
+    }
+}
+
+class Custom_Inventory_Items extends RBO_Recordset {
+    function table_name {
+        return 'custom_inventory_items';
+    }
+
+    function fields() { /* implementation here */ }
+
+    function class_name {
+        return 'Custom_Inventory_Item';
+    }
+}</code></pre>
+<p><strong>Overriding constructor</strong></p>
+<p><strong>__construct()</strong></p>
+<p>Constructor can be overriden but you have to call parent's constructor to initialize object properly.</p>
+<pre><code>function __construct() {
+    parent::__construct();
+    // your code goes here
+}</code></pre>
+<p><strong>Creating record object from existing data</strong></p>
+<p>Sometimes you may get record stored in array and you are sure, that this is record from certain RecordSet. This may be when you retrieve record using Utils_RecordBrowserCommon::get_record() directly, or when you get record data in display callback call. In such situation you use one of the following methods.</p>
+<p>array_to_object($record_array)</p>
+<p>Create object from single record.</p>
+<pre><code>// record data in array
+$record = Utils_RecordBrowserCommon::get_record('custom_inventory_items', $id);
+
+$rs = new Custom_Inventory_Items();
+$object = $rs-&gt;array_to_object($record);</code></pre>
+<p><strong>array_of_records_to_array_of_objects($array_of_record_arrays)</strong></p>
+<p>Create array of objects from array of records stored as array.</p>
+<pre><code>// get all records
+// $records = Utils_RecordBrowserCommon::get_records('custom_inventory_items');
+
+//    $records = array(
+//        array('id' =&gt; 1, 'field1' =&gt; 'data1'),
+//        array('id' =&gt; 2, 'field1' =&gt; 'data2'),
+//        etc.
+//    );
+
+$rs = new Custom_Inventory_Items();
+$objects = $rs-&gt;array_of_records_to_array_of_objects($records);
+
+//    $objects = array(
+//        instance of RBO_Record,
+//        instance of RBO_Record,
+//        etc.
+//    );</code></pre>
+<p><strong>create_record_object($recordset_class_name, $record_array)</strong></p>
+<p>This is protected static method to create record's object and bind it to RecordSet. It can be used only in class that inherits from RBO_Recordset and is created for convenience.</p>
+<p>Due to limitations of PHP version lower than 5.3 we cannot determine class name in inherited static methods, nor use late static binding. As custom display or QFfield callback are always static methods, we cannot create generic method in parent to obtain record object in child class. We must give class name explicitly and we can do this using <strong>CLASS</strong>.</p>
+<p>Maybe you don't need this method - read more about Magic callbacks.</p>
+<p>Right use of this method is such as below:</p>
+<pre><code>class Custom_Inventory_Items extends RBO_Recordset {
+    ...
+
+    function custom_display_callback($record_array, $nolink, $field_desc) {
+        $object = self::create_record_object(__CLASS__, $record_array);
+        // ... further code
+    }
+}</code></pre>
+<p><strong>RBO_Record</strong></p>
+<p>RBO_Record is used to represent record from any recordset. Object of this class allows you to manipulate record by calling specific methods.</p>
+<p>Also you can extend this class to declare own methods attached to record, or implement QFfield or display callback. In such situation you have to declare class_name() method in your RecordSet class.</p>
+<p><strong>Accessing data</strong></p>
+<p>Data is stored in object properties. Every defined field from RecordSet has related property. Property name may be retrieved from field name by function Utils_RecordBrowserCommon::get_field_id(). Result is just lowercased field name with replaced all non-alphanumeric characters with underscore - e.g. Name =&gt; name, Last Name =&gt; last_name, Address 1 =&gt; address_1.</p>
+<p>Also RBO_Record class implements ArrayAccess interface to allow using object like array, what holds compatibility with plain data retrieved from Utils_RecordBrowserCommon functions. If you have written functions, that operate on data arrays from RecordBrowser they should work as well with RBO_Record objects.</p>
+<p>Preferred way to access data is to use properties, because using array like access is just slower.</p>
+<pre><code>$rs = new RBO_RecordsetAccessor('contact');
+$record = $rs-&gt;get_record(1);
+
+echo $record-&gt;first_name;
+echo $record['first_name'];  // slower</code></pre>
+<p>*<em>Creating new records</em></p>
+<p>To create new record object you should use RBO_Recordset::new_record() method instead of directly creating RBO_Record object.</p>
+<p>Example:</p>
+<pre><code>$rs = new RBO_RecordsetAccessor('contact');
+$record = $rs-&gt;new_record();
+$record-&gt;first_name = 'Joe';
+$record-&gt;last_name = 'Doe';
+$record-&gt;save();</code></pre>
+<p>However if you have some record's data stored in array you can supply this array directly to RBO_Recordset::new_record() method and record will be created in database and record's object will be returned:</p>
+<pre><code>$rs = new RBO_RecordsetAccessor('contact');
+$data = array('first_name' =&gt; 'Joe', 'last_name' =&gt; 'Doe');
+$joe = $rs-&gt;new_record($data);</code></pre>
+<p><strong>Special properties</strong></p>
+<p>Every record object has four special properties:</p>
+<p><strong>id</strong></p>
+<p>Records ID. This is read-only property. You shouldn't edit it. Every record retrieved from RecordSet has this property set to numeric value. Every newly created record with RBO_Recordset::new_record() method has this property null and it will be filled when save() method is called.</p>
+<p><strong>_active</strong></p>
+<p>This property indicates that record is active (not deleted) or not (deleted). All deleted by user records are in fact marked as not active. You can manipulate state of record using function such as: delete(), restore(), set_active($state).</p>
+<p><strong>created_by</strong></p>
+<p>ID of user, that created record. For new (not saved) records it's null. After calling save() it will get id of currently logged user - value returned by Acl::get_user() function.</p>
+<p><strong>created_on</strong></p>
+<p>Date and time in format returned by date('Y-m-d H:i:s'). It's only filled in records retrieved from database. This property won't be filled after calling save() on newly created records.</p>
+<p><strong>Select/Multiselect returned value</strong></p>
+<p>Value of select or multiselect field is always id from other RecordSet, that this field links to. It's integer however it's stored in string, because that's how it's returned from database, even it's DB type is integer.</p>
+<pre><code>$contacts = new RBO_RecordsetAccessor('contact');
+$record = $contacts-&gt;get_record(1);
+assert(is_numeric($record-&gt;company_name));
+assert(is_string($record-&gt;company_name));
+
+$companies = new RBO_RecordsetAccessor('company');
+$company = $companies-&gt;get_record($record-&gt;company_name);
+$real_company_name = $company-&gt;company_name;</code></pre>
+<p><strong>About returned types</strong></p>
+<p>Some object properties, as _active, id, fields of checkbox or integer type, may be of string type. Always use weak comparison operator - double equal, not triple (==, not ===).</p>
+<pre><code>$rs = new RBO_RecordsetAccessor('contact');
+
+$record = $rs-&gt;get_record(13);
+assert(is_int($record-&gt;id));
+
+assert(is_string($record-&gt;_active));
+assert($record-&gt;_active == true);
+// as $record-&gt;_active is string "1"
+
+$record = $rs-&gt;get_record('13');
+assert(is_string($record-&gt;id));</code></pre>
+<p><strong>RBO_RecordsetAccessor</strong></p>
+<p>Use this class to access any recordset by it's name. All records returned are objects of RBO_Record class.</p>
+<p>There is one restriction according to objects of this class - you can't use fields() function, because it triggers error. This class can't read fields definition from existing RecordSet. This is not a problem, because fields() function is used only to install RecordSet and, as you are trying to access existing RecordSet, you shouldn't call install() method. But you can call uninstall() method if you want to.</p>
+<pre><code>$rs = new RBO_RecordsetAccessor('company');
+
+// example 1
+$all_records = $rs-&gt;get_records();
+
+// example 2
+$new_record = $rs-&gt;new_record();  // returns RBO_Record instance
+// fill data
+$new_record-&gt;save();
+
+// etc ...</code></pre>
+<p><strong>RBO_FieldDefinition</strong></p>
+<p>This is a base class used to describe field definition. Use this directly class only when you need to use custom types. For basic fields use one of field definition subclasses.</p>
+<p>Every specific class has defined constant type where field type used by RecordBrowser is stored. If you need to use somewhere type's name you don't have to remember it's string, when you use auto-completing IDE.</p>
+<p>Methods:</p>
+<p><strong>__construct($display_name, $type, $param = null, $extra = false, $required = false, $visible = false, $filter = false, $display_callback = null, $QFfield_callback = null, $position = null)</strong></p>
+<p>For some type of fields $param is required.</p>
+<p><strong>get_definition()</strong></p>
+<p>Returns array with definition, like for RecordBrowserCommon::new_record_field() method.</p>
+<p><strong>set_extra()</strong></p>
+<p>Set field as extra. By default every new field described by FieldDefinition class is marked as non-extra field.
+Extra fields can be modified by administrator and in view mode they appear in tab, like addons.
+Returns self reference.</p>
+<p><strong>set_required()</strong>
+Set field as required. By default every new field described by FieldDefinition class is optional.
+Returns self reference.
+set_visible()
+Set field visible in browse mode. In other words visible fields will make new column in tabular view. By default every new field described by FieldDefinition class is showed only in view mode.
+Returns self reference.</p>
+<p><strong>set_filter()</strong></p>
+<p>Set filtering according to this field. For instance, if checkbox field has filtering enabled, then you will have option to show records, where checkbox was checked or not. If field is select you will have dropdown list to choose value to filter.
+By default filtering for field is disabled.
+Returns self reference.</p>
+<p><strong>set_display_callback($callback)</strong></p>
+<p>Set custom display callback for field. Argument must be callable. For more info see Magic callbacks
+Returns self reference.</p>
+<p><strong>set_QFfield_callback($callback)</strong></p>
+<p>Set custom QFfield callback for field. Argument must be callable. For more info see Magic callbacks
+Returns self reference.</p>
+<p><strong>set_position($position)</strong></p>
+<p>Set position for new field. Use only in case of adding new fields to RecordSet. When position for field is not supplied it will be set at the end. During install process just place definitions in right order in array returned by fields() method.</p>
+<p>Supplied argument may be:</p>
+<pre><code>  * numeric
+
+  starting from 1. Field with position = 1 will be set as first field in view. With position = 2 as second, etc.
+
+  * string
+
+  Supply field name (e.g. 'First Name') and new field will be right after supplied field.
+
+  * RBO_FieldDefinition object
+
+  New field will be placed right after this field. It may be more convenient to use this way, but this object is just used to extract field name.</code></pre>
+<p><strong>Simple example</strong></p>
+<pre><code>// used for custom type defined by CRM/Contacts
+$contact = new RBO_FieldDefinition(_M('Owner'), 'crm_contact', array('field_type' =&gt; 'select'));
+$contact-&gt;set_visible()-&gt;set_required();
+
+// _M('Owner')  -- marks string "Owner" to translate later and returns original string.</code></pre>
+<p><strong>Basic fields</strong></p>
+<p>Every specific class has defined constant type where field type used by RecordBrowser is stored. If you need to use somewhere type's name you don't have to remember it's string, when you use auto-completing IDE.</p>
+<p><strong>RBO_Field_Text ($display_name, $length = null)</strong></p>
+<p>length parameter may be null, but then you have to use set_length method</p>
+<p><strong>set_length($length)</strong></p>
+<pre><code>  length in characters</code></pre>
+<p><strong>RBO_Field_LongText ($display_name)</strong></p>
+<p><strong>RBO_Field_Integer ($display_name)</strong></p>
+<p><strong>RBO_Field_Float ($display_name)</strong></p>
+<p><strong>RBO_Field_Checkbox ($display_name)</strong></p>
+<p><strong>RBO_Field_Calculated ($display_name)</strong></p>
+<p>set_db_type($type, $param = null)</p>
+<pre><code>  Set database representation of this field.
+
+  $type name of type or field instance. In case of field instance only type and it's param will be copied and this function $param will be ignored.
+
+  $param is length of field when $type = 'text', otherwise null.</code></pre>
+<p><strong>RBO_Field_Date ($display_name)</strong></p>
+<p><strong>RBO_Field_Timestamp ($display_name)</strong></p>
+<p><strong>RBO_Field_Currency ($display_name)</strong></p>
+<p><strong>RBO_Field_Select</strong></p>
+<p>See PHP docs for more info.</p>
+<p><strong>from($linked_recordset)</strong></p>
+<p><strong>fields($field, $_ = null)</strong></p>
+<p><strong>set_crits_callback($crits_callback)</strong></p>
+<p><strong>set_advanced_properties_callback($advanced_properties_callback)</strong></p>
+<p><strong>RBO_Field_MultiSelect</strong></p>
+<p>Same as RBO_Field_Select, but user has option to select multiple values.</p>
+<p><strong>RBO_Field_CommonData</strong></p>
+<p><strong>from($commondata_array_name)</strong></p>
+<pre><code>  Common array name as supplied to Utils_CommonDataCommon::new_array($name, $values).</code></pre>
+<p><strong>set_order_by_key()</strong></p>
+<pre><code>  Force order by array keys.</code></pre>
+<p><strong>chained<em>select($field, $</em> = null)</strong></p>
+<pre><code>  Set previous field(s) for chained select.</code></pre>
+<p><strong>RBO_Field_PageSplit ($name)</strong></p>
+<p>Adds new tab to view mode. All fields after page split will be on this tab, until next page split. Name is string to display on tab.</p>
+<p>Examples:</p>
+<pre><code>// Sometimes there is more than one valid way to define field. Choose you own method.
+
+$first_name = new RBO_Field_Text(_M("First Name"), 15);
+$first_name-&gt;set_required()-&gt;set_visible();
+
+$last_name = new RBO_Field_Text(_M("Last Name"));
+$last_name-&gt;set_length(30)-&gt;set_required()-&gt;set_visible();
+
+$bio = new RBO_Field_LongText(_M("Biography"));
+
+$siblings = new RBO_Field_Integer(_M("Siblings"));
+
+$weight = new RBO_Field_Float(_M("Weight"));
+
+$likes_tomatoes = new RBO_Field_Checkbox(_M("Likes tomatoes"));
+
+$age = new RBO_Field_Calculated(_M("Age"));
+$age-&gt;set_visible();
+
+$birth_date = new RBO_Field_Date(_M("Birth date"));
+$birth_date-&gt;set_required()-&gt;set_visible();
+
+$last_visit = new RBO_Field_Date(_M("Last visit"));
+
+$assets = new RBO_Field_Currency(_M("Personal assets"));</code></pre>
+<h4>Changelog</h4>
+<hr />
+<p><strong>1.4.0</strong></p>
+<p>First release.</p>
+<p><strong>1.5.0</strong></p>
+<ul>
+<li>
+<p>Add option to disable magic callback generation for certain field</p>
+</li>
+<li>
+<p>Fix :active property issue. Now it's translated properly to _active.</p>
+</li>
+<li>
+<p>Add option to set multiselect from CommonData.</p>
+</li>
+<li>
+<p>Add method to delete field from recordset RBO_Recordset::delete_record_field</p>
+</li>
+<li>New field types: Time, Autonumber, Company, Contact, CompanyOrContact, Employee, Email, Phone</li>
+</ul>";s:12:"content_meta";N;}

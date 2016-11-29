@@ -1,0 +1,44 @@
+/* Epesi Custom CSS override of learn2 theme
+Thomas Tylek
+*/
+
+/* nav.arrow color
+*/
+
+
+a {
+  color: #2db147; }
+  a:hover {
+    color: #165823; }
+
+#header {
+  background: #fff;
+  color: #fff;}
+    #header #logo-svg path {
+      fill: #fff; }
+
+
+.searchbox {
+  border: 1px solid #444a50;
+  background: #565D64;}
+
+
+#sidebar ul.topics > li.parent, #sidebar ul.topics > li.active {
+        background: #0f495c;}
+#sidebar ul li.visited > a .read-icon {
+        color: #20bd11;}
+
+
+#chapter h1 {
+    font-size: 4rem;
+    border-bottom: 4px solid #d2d2d2; }
+
+
+h2 {
+  text-align: center; }
+
+hr {
+  border-bottom: 4px solid #d1d1d1; }
+h1 img {
+    float:left
+}
