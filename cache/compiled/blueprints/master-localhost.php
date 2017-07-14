@@ -1,25 +1,25 @@
 <?php
 return [
     '@class' => 'Grav\\Common\\Config\\CompiledBlueprints',
-    'timestamp' => 1480421645,
-    'checksum' => '9ec55dbddeba0f183b6a326c30963eef',
+    'timestamp' => 1500053938,
+    'checksum' => 'e703387c7ca42c54c1d2dc4630a28811',
     'files' => [
         'system/blueprints/config' => [
             'media' => [
                 'file' => 'system/blueprints/config/media.yaml',
-                'modified' => 1473813336
+                'modified' => 1486385389
             ],
             'site' => [
                 'file' => 'system/blueprints/config/site.yaml',
-                'modified' => 1473813336
+                'modified' => 1499370262
             ],
             'streams' => [
                 'file' => 'system/blueprints/config/streams.yaml',
-                'modified' => 1473813336
+                'modified' => 1486385389
             ],
             'system' => [
                 'file' => 'system/blueprints/config/system.yaml',
-                'modified' => 1473813336
+                'modified' => 1499370262
             ]
         ],
         'user/plugins' => [
@@ -31,9 +31,13 @@ return [
                 'file' => 'user/plugins/breadcrumbs/blueprints.yaml',
                 'modified' => 1473813338
             ],
+            'plugins/devtools' => [
+                'file' => 'user/plugins/devtools/blueprints.yaml',
+                'modified' => 1500053913
+            ],
             'plugins/error' => [
                 'file' => 'user/plugins/error/blueprints.yaml',
-                'modified' => 1473813338
+                'modified' => 1499370262
             ],
             'plugins/highlight' => [
                 'file' => 'user/plugins/highlight/blueprints.yaml',
@@ -45,7 +49,7 @@ return [
             ],
             'plugins/simplesearch' => [
                 'file' => 'user/plugins/simplesearch/blueprints.yaml',
-                'modified' => 1473813340
+                'modified' => 1499370262
             ]
         ]
     ],
@@ -1736,6 +1740,28 @@ return [
                 'name' => 'plugins.breadcrumbs.link_trailing',
                 'validation' => 'strict'
             ],
+            'plugins.devtools' => [
+                'form' => [
+                    'validation' => 'strict'
+                ],
+                'type' => '_root',
+                'form_field' => false
+            ],
+            'plugins.devtools.enabled' => [
+                'type' => 'toggle',
+                'label' => 'PLUGIN_ADMIN.PLUGIN_STATUS',
+                'highlight' => 1,
+                'default' => 0,
+                'options' => [
+                    1 => 'PLUGIN_ADMIN.ENABLED',
+                    0 => 'PLUGIN_ADMIN.DISABLED'
+                ],
+                'validate' => [
+                    'type' => 'bool'
+                ],
+                'name' => 'plugins.devtools.enabled',
+                'validation' => 'strict'
+            ],
             'plugins.error' => [
                 'form' => [
                     'validation' => 'strict'
@@ -2221,6 +2247,9 @@ return [
                     'icon_home' => 'plugins.breadcrumbs.icon_home',
                     'icon_divider_classes' => 'plugins.breadcrumbs.icon_divider_classes',
                     'link_trailing' => 'plugins.breadcrumbs.link_trailing'
+                ],
+                'devtools' => [
+                    'enabled' => 'plugins.devtools.enabled'
                 ],
                 'error' => [
                     'enabled' => 'plugins.error.enabled',

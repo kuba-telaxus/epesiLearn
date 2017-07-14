@@ -2,7 +2,7 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => '/Users/thomastylek/Sites/epesiManual/system/languages/hr.yaml',
-    'modified' => 1473813336,
+    'modified' => 1486385389,
     'data' => [
         'INFLECTOR_UNCOUNTABLE' => [
             0 => 'oprema',

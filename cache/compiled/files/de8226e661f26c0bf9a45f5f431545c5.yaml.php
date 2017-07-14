@@ -2,7 +2,7 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => '/Users/thomastylek/Sites/epesiManual/user/themes/learn2/languages.yaml',
-    'modified' => 1473813340,
+    'modified' => 1486385346,
     'data' => [
         'en' => [
             'THEME_LEARN2_GITHUB_EDIT_THIS_PAGE' => 'edit this page',

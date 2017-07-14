@@ -179,7 +179,7 @@ class __TwigTemplate_c4b6c4c7d97aad2193687bd869d4d7794b46b4b8f059315f424e3ec51a3
                     echo "            <ul>
                 ";
                     // line 17
-                    echo $this->getAttribute($this, "loop", array(0 => $context["p"], 1 => ((isset($context["parent_loop"]) ? $context["parent_loop"] : null) + $this->getAttribute($context["loop"], "index", array()))), "method");
+                    echo $this->getAttribute($this, "loop", array(0 => $context["p"], 1 => (((array_key_exists("parent_loop", $context)) ? (_twig_default_filter((isset($context["parent_loop"]) ? $context["parent_loop"] : null), 0)) : (0)) + $this->getAttribute($context["loop"], "index", array()))), "method");
                     echo "
             </ul>
             ";
@@ -298,7 +298,7 @@ class __TwigTemplate_c4b6c4c7d97aad2193687bd869d4d7794b46b4b8f059315f424e3ec51a3
 /*             </a>*/
 /*             {% if p.children.count > 0 %}*/
 /*             <ul>*/
-/*                 {{ _self.loop(p, parent_loop+loop.index) }}*/
+/*                 {{ _self.loop(p, parent_loop|default(0)+loop.index) }}*/
 /*             </ul>*/
 /*             {% endif %}*/
 /*         </li>*/

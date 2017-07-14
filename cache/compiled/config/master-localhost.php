@@ -1,8 +1,8 @@
 <?php
 return [
     '@class' => 'Grav\\Common\\Config\\CompiledConfig',
-    'timestamp' => 1480421645,
-    'checksum' => '803a26dceeae2f7e4e527c4bd76bdda9',
+    'timestamp' => 1500053938,
+    'checksum' => 'd17eec60e7b277a005c8f41ee808c677',
     'files' => [
         'user/localhost/config' => [
             'security' => [
@@ -33,25 +33,25 @@ return [
             ],
             'system' => [
                 'file' => 'user/config/system.yaml',
-                'modified' => 1480421643
+                'modified' => 1500053913
             ]
         ],
         'system/config' => [
             'media' => [
                 'file' => 'system/config/media.yaml',
-                'modified' => 1473813336
+                'modified' => 1499370262
             ],
             'site' => [
                 'file' => 'system/config/site.yaml',
-                'modified' => 1473813336
+                'modified' => 1499370262
             ],
             'streams' => [
                 'file' => 'system/config/streams.yaml',
-                'modified' => 1473813336
+                'modified' => 1486385389
             ],
             'system' => [
                 'file' => 'system/config/system.yaml',
-                'modified' => 1473813336
+                'modified' => 1499370262
             ]
         ],
         'user/plugins' => [
@@ -63,9 +63,13 @@ return [
                 'file' => 'user/plugins/breadcrumbs/breadcrumbs.yaml',
                 'modified' => 1473813338
             ],
+            'plugins/devtools' => [
+                'file' => 'user/plugins/devtools/devtools.yaml',
+                'modified' => 1500053913
+            ],
             'plugins/error' => [
                 'file' => 'user/plugins/error/error.yaml',
-                'modified' => 1473813338
+                'modified' => 1486385334
             ],
             'plugins/highlight' => [
                 'file' => 'user/plugins/highlight/highlight.yaml',
@@ -77,7 +81,7 @@ return [
             ],
             'plugins/simplesearch' => [
                 'file' => 'user/plugins/simplesearch/simplesearch.yaml',
-                'modified' => 1473813340
+                'modified' => 1499370262
             ]
         ]
     ],
@@ -100,6 +104,9 @@ return [
                 'icon_home' => '',
                 'icon_divider_classes' => 'fa fa-angle-right',
                 'link_trailing' => false
+            ],
+            'devtools' => [
+                'enabled' => true
             ],
             'error' => [
                 'enabled' => true,

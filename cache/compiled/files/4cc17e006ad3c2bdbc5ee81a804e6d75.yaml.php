@@ -2,7 +2,7 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => 'themes://learn2/learn2.yaml',
-    'modified' => 1477028323,
+    'modified' => 1499370262,
     'data' => [
         'enabled' => true,
         'root_page' => NULL,

@@ -1,0 +1,21 @@
+1500663407
+a:2:{s:7:"content";s:1949:"<p>By now you should have a login information sent to you automatically as an e-mail message from epesi when your system administrator created you as a user in the application. This e-mail should include:</p>
+<ul>
+<li>login name (for example: jdoe)</li>
+<li>password (for eample: X6yRG65)</li>
+<li>link to the application (for example: http://crm.yourcompany.com)</li>
+</ul>
+<p>The password is randomly generated unless the administrator specified it manually. In any case you should login to epesi and change your password as soon as possible.</p>
+<h4>Login</h4>
+<hr />
+<p>Please enter your login info (username), and password. If you are using a computer that is your personal work or home workstation you can click on '''Remember me''' box. This box allows you to login to epesi automatically. Don't select this box if you are using a public computer or a computer that you share with someone.</p>
+<p><img alt="Login Screenshot" src="/epesimanual/user/pages/images/logging_screen.png" /></p>
+<h4>Changing Password</h4>
+<hr />
+<p>After a successful login go to Menu -&gt; My Settings -&gt; Control Panel</p>
+<p><img alt="Menu Control Panel" src="/epesimanual/user/pages/images/menu_control_panel.png" /></p>
+<p>This will open the <strong>Control Panel</strong> where you can adjust various settings in the application. Those settings apply to the way the application behaves for <em>you only</em>. Global changes have to be made by administrator.</p>
+<p><img alt="Control Panel Account" src="/epesimanual/user/pages/images/control_panel_account.png" /></p>
+<p>Click on the <strong>Account</strong> button. You need to specify new password (twice), an e-mail address will default to what is stored in the application already, but you can change it here as well, and the old password is required.</p>
+<p><img alt="Password Change" src="/epesimanual/user/pages/images/password_change.png" /></p>
+<p>Finally click the <strong>Save</strong> button.</p>";s:12:"content_meta";N;}

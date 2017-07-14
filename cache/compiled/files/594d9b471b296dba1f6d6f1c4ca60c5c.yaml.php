@@ -2,7 +2,7 @@
 return [
     '@class' => 'Grav\\Common\\File\\CompiledYamlFile',
     'filename' => '/Users/thomastylek/Sites/epesiManual/system/languages/nb.yaml',
-    'modified' => 1473813336,
+    'modified' => 1486385389,
     'data' => [
         'MONTHS_OF_THE_YEAR' => [
             0 => 'januar',

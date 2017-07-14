@@ -1,0 +1,24 @@
+1500663406
+a:2:{s:7:"content";s:1684:"<p><strong>EPESI</strong> is a <strong>web-based application</strong> meaning that it does not have to be installed on your computer. All you need to use it is a computer with Internet access and modern browser. <strong>Firefox</strong>, <strong>Opera</strong>, <strong>Chrome</strong> or <strong>Safari</strong> are supported. It works on computers with Windows, Linux and Mac OS X operating systems. </p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>Currently we do not support Internet Explorer due to compatibility problems. It was tested on newer versions of Internet Explorer and it works, but since it does not fully support new web standards we can not guarantee the full look, feel and functionality.</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><strong>EPESI</strong> is an application that uses a sophisticated database to store many types of records, like:</p>
+<ul>
+<li>Companies</li>
+<li>Contacts</li>
+<li>Calendar Events</li>
+<li>To Do Lists</li>
+<li>Phone Calls</li>
+<li>Notes</li>
+</ul>
+<p>It is a multiuser, real-time collaboration software that allows linking of records to employees and customers. All data and application scripts are kept on the web server. We designed this application in such a way that once information is stored it remains there forever. Even deleted records are kept as hidden from users' view but never deleted from the database.</p>
+<p><strong>EPESI</strong> is offered as <strong>FREE</strong> and Open Source software. It has a modular architecture and the functionality can be extended with additional modules. All modules are written using the <strong>EPESI</strong> framework.</p>";s:12:"content_meta";N;}
